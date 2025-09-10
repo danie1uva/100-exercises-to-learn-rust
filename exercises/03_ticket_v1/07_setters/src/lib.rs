@@ -10,23 +10,43 @@ pub struct Ticket {
 }
 
 impl Ticket {
-    pub fn new(title: String, description: String, status: String) -> Ticket {
+    fn title_is_empty(title: &String) {
         if title.is_empty() {
             panic!("Title cannot be empty");
         }
+    }
+
+    fn title_too_long(title: &String) {
         if title.len() > 50 {
             panic!("Title cannot be longer than 50 bytes");
         }
+    }
+
+    fn description_is_empty(description: &String) {
         if description.is_empty() {
             panic!("Description cannot be empty");
         }
+    }
+
+    fn description_too_long(description: &String) {
         if description.len() > 500 {
             panic!("Description cannot be longer than 500 bytes");
         }
+    }
+
+    fn invalid_status(status: &String) {
         if status != "To-Do" && status != "In Progress" && status != "Done" {
             panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
         }
-
+    }
+    
+    pub fn new(title: String, description: String, status: String) -> Ticket {
+        Ticket::title_is_empty(&title);
+        Ticket::title_too_long(&title);
+        Ticket::description_is_empty(&description);
+        Ticket::description_too_long(&description);
+        Ticket::invalid_status(&status);
+        
         Ticket {
             title,
             description,
@@ -44,6 +64,23 @@ impl Ticket {
 
     pub fn status(&self) -> &String {
         &self.status
+    }
+
+    pub fn set_title(&mut self, new_title: String) {
+        Ticket::title_is_empty(&new_title);
+        Ticket::title_too_long(&new_title);
+        self.title = new_title;
+    }
+
+    pub fn set_description(&mut self, new_description: String) {
+        Ticket::description_is_empty(&new_description);
+        Ticket::description_too_long(&new_description);
+        self.description = new_description;
+    }
+
+    pub fn set_status(&mut self, new_status: String) {
+        Ticket::invalid_status(&new_status);
+        self.status = new_status;
     }
 }
 

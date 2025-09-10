@@ -10,7 +10,7 @@ pub fn factorial(n: u32) -> u32 {
         prod *= i;
         i -= 1;
     }
-    return prod;
+    prod
 }
 
 #[cfg(test)]

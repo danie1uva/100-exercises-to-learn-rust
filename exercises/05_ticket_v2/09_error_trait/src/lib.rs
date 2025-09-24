@@ -3,18 +3,37 @@
 //  The docs for the `std::fmt` module are a good place to start and look for examples:
 //  https://doc.rust-lang.org/std/fmt/index.html#write
 
+use std::{ffi::os_str::Display, fmt::Formatter};
+use std::fmt;
+
+#[derive(Debug)]
 enum TicketNewError {
     TitleError(String),
     DescriptionError(String),
 }
+
+impl fmt::Display for TicketNewError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TicketNewError::TitleError(err) => write!(f, "{}", err),
+            TicketNewError::DescriptionError(err) => write!(f, "{}", err)
+        }
+    }
+}
+
+impl std::error::Error for TicketNewError {}
 
 // TODO: `easy_ticket` should panic when the title is invalid, using the error message
 //   stored inside the relevant variant of the `TicketNewError` enum.
 //   When the description is invalid, instead, it should use a default description:
 //   "Description not provided".
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
-}
+    match Ticket::new(title.clone(), description.clone(), status.clone()) {
+        Ok(ticket) => ticket,
+        Err(TicketNewError::TitleError(err)) => panic!("{}", err),
+        Err(TicketNewError::DescriptionError(err)) => Ticket {title: title, description : "Description not provided".to_string(), status : status }
+        } 
+    }
 
 #[derive(Debug, PartialEq, Clone)]
 struct Ticket {
@@ -36,6 +55,7 @@ impl Ticket {
         description: String,
         status: Status,
     ) -> Result<Ticket, TicketNewError> {
+
         if title.is_empty() {
             return Err(TicketNewError::TitleError(
                 "Title cannot be empty".to_string(),

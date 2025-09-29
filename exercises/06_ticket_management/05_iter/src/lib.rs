@@ -1,3 +1,5 @@
+use std::path::Iter;
+
 use ticket_fields::{TicketDescription, TicketTitle};
 
 // TODO: Provide an `iter` method that returns an iterator over `&Ticket` items.
@@ -30,7 +32,27 @@ impl TicketStore {
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
     }
+
+    pub fn iter(& self) -> std::slice::Iter<'_, Ticket> {
+        self.tickets.iter()
+    }
 }
+
+impl IntoIterator for TicketStore {
+    type Item = Ticket;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.tickets.into_iter()
+    }
+}
+
+
+pub enum TicketFieldValue {
+    Title(TicketTitle),
+    Description(TicketDescription),
+    Status(Status)
+}
+
 
 #[cfg(test)]
 mod tests {
